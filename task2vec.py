@@ -70,6 +70,15 @@ class Task2Vec:
         self.model = model
         # Fix batch norm running statistics (i.e., put batch_norm layers in eval mode)
         self.model.train()
+        
+        """
+        Amrith Code to switch bn layers to eval mode, so that existing running means are used in evaluation 
+        """
+        for name, module in self.model.named_modules():
+            if 'bn' in name:
+                module.eval()
+                print("Switching training of ", name, "to", module.training)
+        
         self.device = get_device(self.model)
         self.skip_layers = skip_layers
         self.max_samples = max_samples
@@ -292,7 +301,7 @@ class Task2Vec:
                 loss.backward()
                 optimizer.step()
                 metrics.update(n=data.size(0), loss=loss.item(), error=error)
-            logging.info(f"[epoch {epoch}]: " + "\t".join(f"{k}: {v}" for k, v in metrics.avg.items()))
+        logging.info(f"[epoch {epoch}]: " + "\t".join(f"{k}: {v}" for k, v in metrics.avg.items()))
 
     def extract_embedding(self, model: ProbeNetwork):
         """
@@ -346,7 +355,7 @@ def _get_loader(trainset, testset=None, batch_size=64, num_workers=6, num_sample
     # and would raise an error if TensorDataset is on CUDA
     num_workers = num_workers if not isinstance(trainset, torch.utils.data.TensorDataset) else 0
     trainloader = torch.utils.data.DataLoader(trainset, sampler=sampler, batch_size=batch_size,
-                                              num_workers=num_workers, drop_last=drop_last)
+                                              num_workers=num_workers, drop_last=drop_last, shuffle=True)
 
     if testset is None:
         return trainloader

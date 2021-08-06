@@ -64,9 +64,10 @@ def resnet18(pretrained=False, num_classes=1000):
     """
     model: ProbeNetwork = ResNet(resnet.BasicBlock, [2, 2, 2, 2], num_classes=num_classes)
     if pretrained:
-        state_dict = model_zoo.load_url(resnet.model_urls['resnet18'])
+        state_dict = model_zoo.load_url(resnet.model_urls['resnet18'], progress=True)
         state_dict = {k: v for k, v in state_dict.items() if 'fc' not in k}
         model.load_state_dict(state_dict, strict=False)
+        print(f'state_dict loaded but missed keys {(set(model.state_dict().keys()).difference(set(state_dict.keys())))}')
     return model
 
 
@@ -78,9 +79,10 @@ def resnet34(pretrained=False, num_classes=1000):
     """
     model = ResNet(resnet.BasicBlock, [3, 4, 6, 3], num_classes=num_classes)
     if pretrained:
-        state_dict = model_zoo.load_url(resnet.model_urls['resnet34'])
+        state_dict = model_zoo.load_url(resnet.model_urls['resnet34'], progress=True)
         state_dict = {k: v for k, v in state_dict.items() if 'fc' not in k}
         model.load_state_dict(state_dict, strict=False)
+        print(f'state_dict loaded but missed keys {(set(model.state_dict().keys()).difference(set(state_dict.keys())))}')
     return model
 
 
