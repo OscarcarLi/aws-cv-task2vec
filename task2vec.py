@@ -327,6 +327,7 @@ def _get_loader(trainset, testset=None, batch_size=64, num_workers=6, num_sample
     if getattr(trainset, 'is_multi_label', False):
         raise ValueError("Multi-label datasets not supported")
     # TODO: Find a way to standardize this
+    ''' Oscar's modification!
     if hasattr(trainset, 'labels'):
         labels = trainset.labels
     elif hasattr(trainset, 'targets'):
@@ -339,6 +340,8 @@ def _get_loader(trainset, testset=None, batch_size=64, num_workers=6, num_sample
     weights /= weights.sum()
 
     sampler = torch.utils.data.sampler.WeightedRandomSampler(weights, num_samples=num_samples)
+    '''
+    sampler = None
     # No need for mutli-threaded loading if everything is already in memory,
     # and would raise an error if TensorDataset is on CUDA
     num_workers = num_workers if not isinstance(trainset, torch.utils.data.TensorDataset) else 0
