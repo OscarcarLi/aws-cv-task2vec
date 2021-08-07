@@ -77,7 +77,7 @@ class Task2Vec:
         for name, module in self.model.named_modules():
             if 'bn' in name:
                 module.eval()
-                print("Switching training of ", name, "to", module.training)
+                logging.info("Switching training of ", name, "to", module.training)
         
         self.device = get_device(self.model)
         self.skip_layers = skip_layers
@@ -301,7 +301,7 @@ class Task2Vec:
                 loss.backward()
                 optimizer.step()
                 metrics.update(n=data.size(0), loss=loss.item(), error=error)
-        logging.info(f"[epoch {epoch}]: " + "\t".join(f"{k}: {v}" for k, v in metrics.avg.items()))
+            logging.info(f"[epoch {epoch}]: " + "\t".join(f"{k}: {v}" for k, v in metrics.avg.items()))
 
     def extract_embedding(self, model: ProbeNetwork):
         """
